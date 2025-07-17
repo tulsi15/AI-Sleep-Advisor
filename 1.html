@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Sleep Quality Advisor</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #ffffff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #01579b;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 18px;
+      display: block;
+      margin: 20px 0 10px;
+      color: #004d40;
+      text-align: left;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #b0bec5;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #00796b;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #004d40;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #006064;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>😴 AI Sleep Quality Advisor</h2>
+    
+    <form onsubmit="sendData(event)">
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" required>
+
+      <label for="age">Your Age:</label>
+      <input type="number" id="age" min="5" max="100" required>
+
+      <label for="hours">How many hours did you sleep last night?</label>
+      <input type="number" id="hours" min="0" max="12" required>
+
+      <label for="feeling">How do you feel after waking up?</label>
+      <select id="feeling" required>
+        <option value="">--Select--</option>
+        <option value="Fresh">😄 Fresh</option>
+        <option value="Okay">🙂 Okay</option>
+        <option value="Tired">😴 Tired</option>
+        <option value="Exhausted">😫 Exhausted</option>
+      </select>
+
+      <label for="screen">Did you use phone/laptop before bed?</label>
+      <select id="screen" required>
+        <option value="">--Select--</option>
+        <option value="No">🙅‍♂️ No</option>
+        <option value="Yes for less than 30 mins">📱 Yes (under 30 min)</option>
+        <option value="Yes for more than 1 hour">📱📱 Yes (over 1 hour)</option>
+      </select>
+<button onclick="getWeeklySummary()">📊 View Weekly Sleep Summary</button>
+<div id="summary"></div>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="status">Awaiting your input...</div>
+  </div>
+
+<script>
+  function sendData(e) {
+    e.preventDefault();
+
+    const data = {
+      name: document.getElementById("name").value,
+      age: document.getElementById("age").value,
+      hours: document.getElementById("hours").value,
+      feeling: document.getElementById("feeling").value,
+      screen: document.getElementById("screen").value
+    };
+
+    document.getElementById("status").innerText = "Processing your data...";
+
+   fetch("https://hook.relay.app/api/v1/playbook/cmcogsofw415y0pm63f87a01e/trigger/2jD50chkJ52RezKsP56xog", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+})
+
+    .then(res => res.json())
+    .then(response => {
+      document.getElementById("status").innerHTML = `
+        <h3>🧠 AI Sleep Feedback</h3>
+        <p><strong>Sleep Quality:</strong> ${response.sleep_quality}</p>
+        <p><strong>Tip:</strong> ${response.tip}</p>
+        <p><strong>Motivational Quote:</strong> "${response.quote}"</p>
+        <hr>
+        
+      `;
+    })
+    .catch(() => {
+      document.getElementById("status").innerText = "❌ Error. Please try again.";
+    });
+  }
+</script>
+</body>
+</html>
